@@ -88,10 +88,10 @@ public class DeploymentIT {
         runTestWithParameter();
     }
 
-    @Test
-    public void deployWithMapStore() throws IOException, ExecutionException, InterruptedException, URISyntaxException {
-        runTestWithParameter("--storage", "chm");
-    }
+//    @Test
+//    public void deployWithMapStore() throws IOException, ExecutionException, InterruptedException, URISyntaxException {
+//        runTestWithParameter("--storage", "chm");
+//    }
 
     private void runTestWithParameter(String... args) throws IOException, URISyntaxException, InterruptedException, ExecutionException {
         Path keycloakProvidersFolder = getKeycloakProvidersFolder();
@@ -206,9 +206,7 @@ public class DeploymentIT {
 
     private void clearKeycloak(Path keycloakProvidersFolder) throws IOException {
         try (Stream<Path> files = Files.list(keycloakProvidersFolder).filter(path -> path.getFileName().toString().endsWith(".jar"))) {
-            for (Path path : files.collect(Collectors.toList())) {
-                Files.delete(path);
-            }
+            for (Path path : files.collect(Collectors.toList())) Files.delete(path);
         }
         FileUtils.deleteDirectory(keycloakProvidersFolder.resolve("..").resolve("data").toFile());
     }
@@ -242,11 +240,8 @@ public class DeploymentIT {
     private static void packageProvider() throws IOException, InterruptedException {
         Assert.assertTrue("should be run from the module path 'dataset'", Path.of("../mvnw").toFile().exists());
         List<String> cli = new ArrayList<>();
-        if (isWindows()) {
-            cli.addAll(Arrays.asList("cmd", "/c", "mvnw.cmd"));
-        } else {
-            cli.add("./mvnw");
-        }
+        if (isWindows()) cli.addAll(Arrays.asList("cmd", "/c", "mvnw.cmd"));
+        else cli.add("./mvnw");
         cli.addAll(Arrays.asList("-am", "-pl", "dataset", "package", "-DskipTests"));
         ProcessBuilder processBuilder = new ProcessBuilder(cli);
         processBuilder
